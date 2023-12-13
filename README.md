@@ -8,10 +8,11 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 3. Se placer dans le dossier du projet avec cette commande:
    `cd Equipe80_Frontend_ORNISEC`
 4. Installer les dépendances avec cette commande:
-   `npm install`
-5. Lancer le serveur de développement avec cette commande:
+   `npm install` ATTENTION : Cette commande prend du temps car elle initie le téléchargement des dépendances.
+   Aussi, ne tenez pas compte des erreurs indiqués dans le terminal, ce sont des conflits de dépendances qui n'ont aucune incidence sur le lancement du serveur.
+6. Lancer le serveur de développement avec cette commande:
    `npm run dev`
-6. Ouvrir [http://localhost:3000/login](http://localhost:3000/login) avec votre navigateur pour voir le résultat.
+7. Ouvrir [http://localhost:3000/login](http://localhost:3000/login) avec votre navigateur pour voir le résultat.
 
 ATTENTION : Il faut le livrable du projet 81 (et lancer le serveur) pour pouvoir s'authentifier et donc accéder aux autres pages.
 (Seulement la page de connexion est accessible sans être authentifié.)
