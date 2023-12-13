@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+:root {
+  /**********************/
+  /* Variables globales */
+  /**********************/
+
+  /* Couleurs */
+  --color-background: rgb(76 29 149); /* Violet pour le fond */
+  --color-button: rgb(46 16 101); /* Violet foncé pour les boutons */
+  --color-sidebar: rgb(156 29 149); /* Couleur de la sidebar */
+  --color-orange: rgb(0, 0, 0); /* Orange pour les boutons de la sidebar */
+  --color-button-sidebar: #f3f4f6; /* Couleur des boutons de la sidebar */
+  --color-text1: white; /* 1ère couleur du texte */
+  --color-text2: black; /* 2ème couleur du texte */
+
+  --background: var(--color-background);
+  --button: var(--color-button);
+  --sidebar: var(--color-sidebar);
+  --orange: var(--color-orange);
+  --button-sidebar: var(--color-button-sidebar);
+  --text1: var(--color-text1);
+  --text2: var(--color-text2);
+
+  height: 100%;
+}
+
+@layer base {
+  :root {
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --radius: 0.5rem;
+  }
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+.auditbar::-webkit-scrollbar {
+  display: none;
+}
+
+.mobilesidebar::-webkit-scrollbar {
+  display: none;
+}
+
+.theme-classique {
+  --background: var(--color-background);
+  --button: var(--color-button);
+  --sidebar: var(--color-sidebar);
+  --orange: var(--color-orange);
+  --button-sidebar: var(--color-button-sidebar);
+  --text1: var(--color-text1);
+  --text2: var(--color-text2);
+}
+
+.theme-imt {
+  --background: rgb(212, 220, 240);
+  --button: #0d274d;
+  --sidebar: #01bceb;
+  --orange: var(--color-orange);
+  --button-sidebar: var(--color-button-sidebar);
+  --text1: var(--color-text1);
+  --text2: var(--color-text2);
+}
+
+.theme-vert {
+  --background: #c6e0ec;
+  --button: #6da1b8;
+  --sidebar: #88b3c6;
+  --orange: var(--color-orange);
+  --button-sidebar: var(--color-button-sidebar);
+  --text1: var(--color-text1);
+  --text2: var(--color-text2);
+}
+
+.theme-sombre {
+  --background: dimgrey;
+  --button: rgb(64, 64, 64);
+  --sidebar: black;
+  --orange: blue;
+  --button-sidebar: lightgrey;
+  --text1: black;
+  --text2: white;
+}
+
+[data-collapse='true'] {
+  width: 5.5rem;
+}
+
+[data-collapse='true'] .sidebar_name,
+[data-collapse='true'] .sidebar_logo-name {
+  display: none;
+}
