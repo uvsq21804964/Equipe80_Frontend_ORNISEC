@@ -1,19 +1,52 @@
 'use client';
 
-import React, { useState } from 'react';
-import axios from 'axios';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+
+import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
-import DatePicker from 'react-datepicker';
+
+// import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import Input from '@/components/inputs/input';
+import Select from '@/components/inputs/select';
 import Button from '@/components/Button';
+
+import InstanceAPI from '@/app/api/api';
 
 function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const [dateDebut, setdateDebut] = useState(new Date());
-  const [DateFin, setDateFin] = useState(new Date());
+  // const [dateDebut, setdateDebut] = useState(new Date());
+  // const [DateFin, setDateFin] = useState(new Date());
+
+  const [users, setUsers] = useState([]); // Utilisez le state pour stocker les données
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const axiosConfig = {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '/',
+            'Cache-Control': 'no-cache',
+            'Cross-Origin-Resource-Policy': 'same-origin',
+          },
+        };
+
+        const response = await InstanceAPI.get(
+          `http://localhost:8080/admin/accounts`,
+          axiosConfig
+        );
+
+        setUsers(response.data.users);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des données :', error);
+      }
+    };
+
+    // Appel de la fonction pour récupérer les données
+    fetchData();
+  }, []); // Le tableau de dépendances vide assure que useEffect s'exécute une seule fois lors du montage du composant
 
   const {
     register,
@@ -21,18 +54,43 @@ function RegisterForm() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit: SubmitHandler = () => {
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true);
 
-    const data = {
-      dateDebut,
-      DateFin,
-    };
+    if (!data.name) {
+      toast.error('Veuillez sélectionner un responsable.');
+      setIsLoading(false);
+      return;
+    }
 
-    // Connexion au serveur back-end pour transmettre des données (post)
-    axios
-      .post('/api/register', data)
-      .catch(() => toast.error('Une erreur est survenue.'))
+    if (!data.entreprise) {
+      toast.error("Veuillez saisir le nom de l'entreprise.");
+      setIsLoading(false);
+      return;
+    }
+
+    InstanceAPI.post(
+      `createAudit`,
+      {
+        company_name: data.entreprise,
+        chef_auditeurs: data.name,
+        list_auditeurs: [],
+        description: 'Très urgent',
+      },
+      {
+        withCredentials: true,
+      }
+    )
+      .then(() => {
+        toast.success("Création de l'audit réussie !", {
+          duration: 4000,
+          position: 'top-center',
+          icon: '👏',
+        });
+      })
+      .catch(() => {
+        toast.error('Une erreur inconnue est survenue.');
+      })
       .finally(() => setIsLoading(false));
   };
 
@@ -40,19 +98,42 @@ function RegisterForm() {
     <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
       <div
         style={{ borderRadius: '0.5rem' }}
-        className="bg-white px-4 py-8 shadow-md sm:px-10 shadow-slate-900"
+        className="bg-text1 px-4 py-8 shadow-md sm:px-10 shadow-slate-900"
       >
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 gap-4">
             <div className="mb-6">
-              <Input
+              <Select
                 id="name"
-                label="Nom de l'auditeur"
+                label="Nom du responsable de l'audit"
                 register={register}
                 errors={errors}
                 disabled={isLoading}
-              />
+              >
+                <option value="">Sélectionnez un responsable</option>
+                {users.map((user) => (
+                  <option key={user.email} value={user.name}>
+                    {user.name}
+                  </option>
+                ))}
+              </Select>
             </div>
+            {/* <div className="flex justify-center">
+              <Popover>
+                <PopoverTrigger>
+                  <Button shadow border violetFonce>
+                    <PlusCircle className="w-5 h-5 mr-2" />
+                    Assigner un responsable
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="bg-button fixed top-[-450px] left-[-550px]"
+                  align="start"
+                >
+                  <DataTable columns={columns} data={persons} />
+                </PopoverContent>
+              </Popover>
+            </div> */}
             <div className="mb-6">
               <Input
                 id="entreprise"
@@ -62,7 +143,7 @@ function RegisterForm() {
                 disabled={isLoading}
               />
             </div>
-            <div className="mb-2">
+            {/* <div className="mb-2">
               <label>Date de début de l'audit</label>
               <DatePicker
                 selected={dateDebut}
@@ -78,7 +159,7 @@ function RegisterForm() {
                 onChange={(date) => setDateFin(date)}
                 placeholderText="Sélectionnez une date"
               />
-            </div>
+            </div> */}
           </div>
           <div>
             <Button

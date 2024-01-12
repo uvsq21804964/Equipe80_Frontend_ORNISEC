@@ -100,10 +100,10 @@ export function DataTable<TData, TValue>({
         <Input
           placeholder="Rechercher une entreprise..."
           value={
-            (table.getColumn('Entreprise')?.getFilterValue() as string) ?? ''
+            (table.getColumn('companie')?.getFilterValue() as string) ?? ''
           }
           onChange={(event) =>
-            table.getColumn('Entreprise')?.setFilterValue(event.target.value)
+            table.getColumn('companie')?.setFilterValue(event.target.value)
           }
           className="max-w-sm bg-text1 text-text2 border-text1 shadow-md shadow-slate-900"
         />

@@ -1,11 +1,12 @@
 'use client';
 
-import { Pencil, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 
 import { useState } from 'react';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
@@ -18,49 +19,109 @@ import {
 import Button from '@/components/Button';
 import { Textarea } from '@/components/ui/textarea';
 
+import InstanceAPI from '@/app/api/api';
+import { cn } from '@/lib/utils';
+
 const FormSchema = z.object({
   note: z.string(),
   commentaire: z.string(),
 });
 interface HomePageProps {
   question: {
-    label: string;
-    aide: string[];
-    note: number;
-    commentaire: string;
+    ref: string;
+    catégorie: string;
+    chantier: string;
+    question: string;
+    comment: string;
+    'note numérique': number;
+    'aide à la notation': string[];
   };
   nb: number;
+  parametre: string;
 }
 
-const Question = ({ question, nb }: HomePageProps) => {
-  const [note, setNote] = useState(question.note);
+const Question = ({ question, nb, parametre }: HomePageProps) => {
+  const [note, setNote] = useState(question['note numérique']);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      note: question.note.toString(),
-      commentaire: question.commentaire,
+      note: question['note numérique']
+        ? question['note numérique'].toString()
+        : '',
+      commentaire: question.comment,
     },
   });
   // const formMethods = useForm(); Crée une instance de contrôle distincte
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  function onSubmit(
+    data: z.infer<typeof FormSchema>,
+    questionref: string,
+    auditref: string
+  ) {
     console.log(data);
+    console.log(questionref);
+    console.log(auditref);
+    const queryParams = new URLSearchParams({
+      mark: data.note, // Assuming 'note' is a string
+    });
+    const queryParamsdata = new URLSearchParams({
+      comment: data.commentaire, // Assuming 'note' is a string
+    });
+
+    InstanceAPI.post(
+      `setMark`,
+      {
+        id: auditref,
+        qst_ref: question.ref,
+        mark: data.note,
+      },
+      { withCredentials: true }
+    )
+      .then(() => {
+        toast.success('Note enregistrée');
+      })
+      .catch((error) => {
+        console.error('Erreur lors de la requête post mark :', error);
+      });
+
+    if (data.commentaire) {
+      InstanceAPI.post(
+        `setComment`,
+        {
+          id: auditref,
+          qst_ref: question.ref,
+          comment: data.commentaire,
+        },
+        {
+          withCredentials: true,
+        }
+      )
+        .then(() => {
+          toast.success('Commentaire enregistré');
+        })
+        .catch((error) => {
+          console.error('Erreur lors de la requête post comment :', error);
+        });
+    }
   }
 
-  function foo(item: string) {
-    const match = item.match(/\d+/);
-    if (match === null) return;
-    setNote(parseInt(match[0], 10));
-  }
+  // function foo(item: string) {
+  //   const match = item.match(/\d+/);
+  //   if (match === null) return;
+  //   setNote(parseInt(match[0], 10));
+  // }
 
   return (
-    <Card key={question.label} className="w-full md:w-auto bg-text1 text-text2">
+    <Card
+      key={question.question}
+      className="w-full md:w-auto bg-text1 text-text2"
+    >
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-sm font-medium">
-          {nb + 1} - {question.label}
+          {nb + 1} - {question.question}
         </CardTitle>
-        <Pencil className="h-4 w-4 mr-2 text-blue-600 hover:text-blue-600 hover:font-bold" />
+        {/* <Pencil className="h-4 w-4 mr-2 text-blue-600 hover:text-blue-600 hover:font-bold" /> */}
       </CardHeader>
       <CardContent className="">
         <div className="grid grid-cols-1 gap-6">
@@ -69,7 +130,9 @@ const Question = ({ question, nb }: HomePageProps) => {
               <FormProvider {...form}>
                 <Form {...form}>
                   <form
-                    onSubmit={form.handleSubmit(onSubmit)}
+                    onSubmit={form.handleSubmit((data) =>
+                      onSubmit(data, question.ref, parametre)
+                    )}
                     className="w-full"
                   >
                     <div>
@@ -106,7 +169,7 @@ const Question = ({ question, nb }: HomePageProps) => {
                                     id="number"
                                     type="number"
                                     placeholder="Note"
-                                    max={10}
+                                    max={1}
                                     min={0}
                                     step={0.05}
                                     {...field}
@@ -155,11 +218,11 @@ const Question = ({ question, nb }: HomePageProps) => {
                         />
 
                         <div className="w-64">
-                          {question.aide?.map((item, index) => (
+                          {question['aide à la notation']?.map((item) => (
                             <div key={item}>
-                              <input
-                                className="
-                                        form-input
+                              <p
+                                className={cn(
+                                  `form-input
                                         block
                                         w-full
                                         rounded-xl
@@ -177,12 +240,15 @@ const Question = ({ question, nb }: HomePageProps) => {
                                         focus:ring-inset
                                         focus:ring-sky-600
                                         sm:text-sm
-                                        sm:leading-6`"
-                                id={index.toString()}
-                                type="button"
-                                onClick={() => foo(item)}
-                                value={item}
-                              />
+                                        sm:leading-6`,
+                                  item.toString().substring(0, 2) === '--' &&
+                                    'bg-gray-300 text-gray-300 h-1'
+                                )}
+                              >
+                                {item.toString().substring(0, 2) !== '--'
+                                  ? item
+                                  : null}
+                              </p>
                             </div>
                           ))}
                         </div>

@@ -5,7 +5,7 @@ import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import Cookies from 'universal-cookie';
-import API from '@/app/api/api';
+import InstanceAPI from '@/app/api/api';
 import Input from '@/components/inputs/input';
 import Button from '@/components/Button';
 
@@ -18,8 +18,8 @@ function LoginForm() {
   }, []);
 
   useEffect(() => {
-    const token = cookies.get('access_token');
-    if (token) {
+    const token = cookies.get('connected');
+    if (token !== undefined) {
       router.push('/home');
     }
   }, [cookies, router]);
@@ -39,31 +39,24 @@ function LoginForm() {
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true);
 
-    API.post(`login`, {
-      email: data.email,
-      password: data.password,
-    })
-      .then((response) => {
+    InstanceAPI.post(
+      `login`,
+      {
+        email: data.email,
+        password: data.password,
+      },
+      {
+        withCredentials: true,
+      }
+    )
+      .then(() => {
         router.push('/home');
         toast.success('Connexion réussie !', {
           duration: 4000,
           position: 'top-center',
           icon: '👏',
         });
-
-        // Set cookies
-        cookies.set('access_token', response.data.access_token, {
-          path: '/',
-          // expires: new Date(Date.now() + 5 * 60 * 1000),
-        });
-        cookies.set('logged_in', response.data.logged_in, {
-          path: '/',
-          // expires: new Date(Date.now() + 5 * 60 * 1000),
-        });
-        cookies.set('refresh_token', response.data.refresh_token, {
-          path: '/',
-          // expires: new Date(Date.now() + 5 * 60 * 1000),
-        });
+        cookies.set('connected', true, { path: '/' });
       })
       .catch((error) => {
         if (error.response) {

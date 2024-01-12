@@ -4,16 +4,40 @@
 
 import { User } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, Pencil } from 'lucide-react';
+import { ArrowUpDown, Pencil, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
+import toast from 'react-hot-toast';
+import InstanceAPI from '@/app/api/api';
+
 import { Button } from '@/components/ui/button';
+
+const deleteAudit = (idAudit: string) => {
+  InstanceAPI.delete(`delete`, { data: { id: idAudit } })
+    .then(() => {
+      toast.success(`L'audit a été supprimé !`, {
+        duration: 4000,
+        position: 'top-center',
+        icon: '👏',
+      });
+    })
+    .catch((error) => {
+      if (error.response) {
+        if (error.response.status === 400) {
+          toast.error("L'email ou le mot de passe est incorrect.");
+          return;
+        }
+      }
+
+      toast.error('Une erreur inconnue est survenue.');
+    });
+};
 
 const chef = "Responsable de l'audit";
 
 export const columns: ColumnDef<User>[] = [
   {
-    accessorKey: 'Entreprise',
+    accessorKey: 'companie',
     header: ({ column }) => {
       return (
         <div className="flex justify-center">
@@ -28,7 +52,7 @@ export const columns: ColumnDef<User>[] = [
       );
     },
     cell: ({ row }) => {
-      const entreprise = row.getValue('Entreprise') || 'N/A';
+      const entreprise = row.getValue('companie') || 'N/A';
       return (
         <div className="flex justify-center">
           {JSON.stringify(entreprise).replaceAll('"', '')}
@@ -37,7 +61,7 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
-    accessorKey: 'Responsable',
+    accessorKey: 'chef',
     header: ({ column }) => {
       return (
         <div className="flex justify-center">
@@ -52,7 +76,7 @@ export const columns: ColumnDef<User>[] = [
       );
     },
     cell: ({ row }) => {
-      const gerant = row.getValue('Responsable') || 'N/A';
+      const gerant = row.getValue('chef') || 'N/A';
       return (
         <div className="flex justify-center">
           {JSON.stringify(gerant).replaceAll('"', '')}
@@ -61,7 +85,7 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
-    accessorKey: 'Début',
+    accessorKey: 'date',
     header: ({ column }) => {
       return (
         <div className="flex justify-center">
@@ -76,7 +100,7 @@ export const columns: ColumnDef<User>[] = [
       );
     },
     cell: ({ row }) => {
-      const debut = row.getValue('Début') || 'N/A';
+      const debut = row.getValue('date') || 'N/A';
       return (
         <div className="flex justify-center">
           {JSON.stringify(debut).replaceAll('"', '')}
@@ -85,7 +109,7 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
-    accessorKey: 'Fin',
+    accessorKey: 'Progression',
     header: ({ column }) => {
       return (
         <div className="flex justify-center">
@@ -93,52 +117,41 @@ export const columns: ColumnDef<User>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            Date de fin
+            Questions en attente
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         </div>
       );
     },
     cell: ({ row }) => {
-      const fin = row.getValue('Fin') || 'N/A';
+      const progression = row.getValue('Progression') || 'N/A';
+      const questionsRestantes = `${progression.incomplete} / ${progression['total question']}`;
+      console.log('questionsRestantes', questionsRestantes);
+      return <div className="flex justify-center">{questionsRestantes}</div>;
+    },
+  },
+  {
+    accessorKey: 'Edition',
+    header: () => {},
+    cell: ({ row }) => {
       return (
-        <div className="flex justify-center">
-          {JSON.stringify(fin).replaceAll('"', '')}
-        </div>
+        <Link href={`/current-audits/${row.getValue('Suppression')}/edit`}>
+          <Pencil className="h-4 w-4 mr-2 text-blue-600 hover:text-blue-600 hover:font-bold" />
+        </Link>
       );
     },
   },
   {
-    id: 'actions',
+    accessorKey: 'Suppression',
+    header: () => {},
     cell: ({ row }) => {
-      const { id } = row.original;
-
       return (
-        // <DropdownMenu>
-        //   <DropdownMenuTrigger asChild>
-        //     <Button variant="ghost" className="h-4 w-8 p-0">
-        //       <span className="sr-only">Ouvrir le menu</span>
-        //       <MoreHorizontal />
-        //     </Button>
-        //   </DropdownMenuTrigger>
-        //   <DropdownMenuContent align="end" className="bg-red-100">
-        //     <Link href={`/admin/user/${id}`}>
-        //       <DropdownMenuItem className="cursor-pointer">
-        //         <Pencil className="h-4 w-4 mr-2 text-blue-600" />
-        //         <p className="hover:text-blue-600 hover:font-bold">Modifier</p>
-        //       </DropdownMenuItem>
-        //     </Link>
-        //     <Link href="/admin/users">
-        //       <DropdownMenuItem className="cursor-pointer">
-        //         <Trash2 className="h-4 w-4 mr-2 text-red-600" />
-        //         <p className="hover:text-red-600 hover:font-bold">Supprimer</p>
-        //       </DropdownMenuItem>
-        //     </Link>
-        //   </DropdownMenuContent>
-        // </DropdownMenu>
-        <Link href={`/admin/user/${id}`}>
-          <Pencil className="h-4 w-4 mr-2 text-blue-600 hover:text-blue-600 hover:font-bold" />
-        </Link>
+        <button
+          type="button"
+          onClick={() => deleteAudit(row.getValue('Suppression'))}
+        >
+          <Trash2 className="h-4 w-4 mr-2 text-red-600" />
+        </button>
       );
     },
   },

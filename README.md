@@ -10,9 +10,10 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 4. Installer les dépendances avec cette commande:
    `npm install` ATTENTION : Cette commande prend du temps car elle initie le téléchargement des dépendances.
    Aussi, ne tenez pas compte des erreurs indiqués dans le terminal, ce sont des conflits de dépendances qui n'ont aucune incidence sur le lancement du serveur.
-6. Lancer le serveur de développement avec cette commande:
+5. Lancer le serveur de développement avec cette commande:
    `npm run dev`
-7. Ouvrir [http://localhost:3000/login](http://localhost:3000/login) avec votre navigateur pour voir le résultat.
+6. Télécharger l'extension [Allow CORS: Access-Control-Allow-Origin](https://chromewebstore.google.com/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf) pour le navigateur Chrome et l'activer. (Vous avez la possibilité de désactiver l'extension une fois que vous avez terminé d'étudier notre projet.)
+7. Ouvrir [http://localhost:3000/login](http://localhost:3000/login) avec votre navigateur Chrome pour voir le résultat.
 
 ATTENTION : Il faut le livrable du projet 81 (et lancer le serveur) pour pouvoir s'authentifier et donc accéder aux autres pages.
 (Seulement la page de connexion est accessible sans être authentifié.)
@@ -78,7 +79,7 @@ Les composants se trouvent dans le dossier 'components'
 - `/create-audit` pour créer un audit
 - `/audit` pour ajouter un auditeur à un audit
 
-## Problèmes
+## Prochaines étapes
 
-- Dans app > (pages) > (routes) > current-audits > pages.tsx,
-  on obtient une erreur 401 aux deux requêtes émises (lignes 12 et 30) même en s'étant authentifié.
+- Intégrer le back pour la page du plan d'action
+- La page des audits terminés est à terminée (redirection vers le plan d'action + suppression de l'audit)

@@ -3,10 +3,10 @@ export default function Auditbar({
   items,
 }: {
   onChildValueChange: (value: string) => void;
-  items: { name: string; href: string }[];
+  items: string[];
 }) {
   const handleChange = (categorie: string) => {
-    const newValue = categorie;
+    const newValue = categorie.replaceAll(' ', '_');
     onChildValueChange(newValue);
   };
 
@@ -29,7 +29,7 @@ export default function Auditbar({
         </p>
       </div>
       <ul className="list-none">
-        {items.map(({ name }) => (
+        {items.map((name) => (
           <li className="text-center items-center justify-center" key={name}>
             <div className="justify-center items-center flex">
               <button
@@ -37,26 +37,28 @@ export default function Auditbar({
                 onClick={() => handleChange(name)}
                 value={name}
                 className="
-                text-xs 
-                no-underline 
-                text-black 
-                py-2 
-                px-4 
-                flex 
-                items-center 
-                bg-buttonSidebar 
-                mb-4 
-                w-full
-                rounded-lg 
-                transition 
-                duration-300 
-                hover:bg-orange 
-                hover:text-white 
-                focus:bg-orange 
-                focus:text-white 
-                justify-center"
+          text-xs 
+          no-underline 
+          text-black 
+          py-2 
+          px-4 
+          flex 
+          items-center 
+          bg-buttonSidebar 
+          mb-4 
+          w-full
+          rounded-lg 
+          transition 
+          duration-300 
+          hover:bg-orange 
+          hover:text-white 
+          focus:bg-orange 
+          focus:text-white 
+          justify-center"
               >
-                <span className="items-center justify-center">{name}</span>
+                <span className="items-center justify-center">
+                  {name.replaceAll('_', ' ')}
+                </span>
               </button>
             </div>
           </li>

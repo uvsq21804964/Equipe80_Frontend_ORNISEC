@@ -7,20 +7,31 @@ import Question from '@/components/Question';
 
 export default function Questionnaire({
   questions,
+  para,
 }: {
-  questions: {
-    label: string;
-    aide: string[];
-    note: number;
-    commentaire: string;
+  // eslint-disable-next-line react/require-default-props
+  questions?: {
+    ref: string;
+    catégorie: string;
+    chantier: string;
+    question: string;
+    comment: string;
+    'note numérique': number;
+    'aide à la notation': string[];
   }[];
+  para: string;
 }) {
   return (
     <Tabs defaultValue="overview" className="space-y-4">
       <TabsContent value="overview" className="space-y-4">
         <div className="grid gap-4 md:grid-cols-2">
-          {questions.map((question, index) => (
-            <Question key={question.label} question={question} nb={index} />
+          {questions?.map((question, index) => (
+            <Question
+              key={question.question}
+              question={question}
+              nb={index}
+              parametre={para}
+            />
           ))}
         </div>
 

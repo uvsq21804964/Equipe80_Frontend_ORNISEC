@@ -93,14 +93,14 @@ export function DataTable<TData, TValue>({
         </h2>
         <Input
           placeholder="Rechercher un nom..."
-          value={(table.getColumn('Nom')?.getFilterValue() as string) ?? ''}
+          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
-            table.getColumn('Nom')?.setFilterValue(event.target.value)
+            table.getColumn('name')?.setFilterValue(event.target.value)
           }
           className="max-w-sm bg-text1 text-text2 shadow-md shadow-slate-900 border-text1"
         />
         <div>
-          <Link href="/admin/sign-up">
+          <Link href="/admin/create-account">
             <Button shadow border violetFonce>
               <PlusCircle className="w-5 h-5 mr-2" />
               Ajouter un auditeur
@@ -202,7 +202,7 @@ export function DataTable<TData, TValue>({
                         column.toggleVisibility(!!value)
                       }
                     >
-                      {column.id}
+                      {column.id !== 'name' ? column.id : 'Nom'}
                     </DropdownMenuCheckboxItem>
                   );
                 })}

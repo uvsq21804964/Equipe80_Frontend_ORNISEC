@@ -1,404 +1,45 @@
 'use client';
 
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from 'axios';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import InstanceAPI from '@/app/api/api';
 import { DataTable } from './_components/data-table';
 import { columns } from './_components/columns';
 
-// async function getData(): Promise<any[]> {
-//   // Fetch data from your API here.
-//   return [
-//     {
-//       Email: 'm@example.com',
-//       Nom: 'M',
-//       Prénom: 'Example',
-//       Rôle: 'admin',
-//     },
-//     {
-//       Email: 'tom@abbouz.com',
-//       Nom: 'Tom',
-//       Prénom: 'Abbouz',
-//       Rôle: 'admin',
-//     },
-//     {
-//       Email: 'elon@musk.com',
-//       Nom: 'Elon',
-//       Prénom: 'Musk',
-//       Rôle: 'auditeur',
-//     },
-//     {
-//       Email: 'jeff@bezos.com',
-//       Nom: 'Jeff',
-//       Prénom: 'Bezos',
-//       Rôle: 'auditeur',
-//     },
-//     {
-//       Email: 'm@example.com',
-//       Nom: 'M',
-//       Prénom: 'Example',
-//       Rôle: 'admin',
-//     },
-//     {
-//       Email: 'tom@abbouz.com',
-//       Nom: 'Tom',
-//       Prénom: 'Abbouz',
-//       Rôle: 'admin',
-//     },
-//     {
-//       Email: 'elon@musk.com',
-//       Nom: 'Elon',
-//       Prénom: 'Musk',
-//       Rôle: 'auditeur',
-//     },
-//     {
-//       Email: 'jeff@bezos.com',
-//       Nom: 'Jeff',
-//       Prénom: 'Bezos',
-//       Rôle: 'auditeur',
-//     },
-//     {
-//       Email: 'm@example.com',
-//       Nom: 'M',
-//       Prénom: 'Example',
-//       Rôle: 'admin',
-//     },
-//     {
-//       Email: 'tom@abbouz.com',
-//       Nom: 'Tom',
-//       Prénom: 'Abbouz',
-//       Rôle: 'admin',
-//     },
-//     {
-//       Email: 'elon@musk.com',
-//       Nom: 'Elon',
-//       Prénom: 'Musk',
-//       Rôle: 'auditeur',
-//     },
-//     {
-//       Email: 'jeff@bezos.com',
-//       Nom: 'Jeff',
-//       Prénom: 'Bezos',
-//       Rôle: 'auditeur',
-//     },
-//     {
-//       Email: 'm@example.com',
-//       Nom: 'M',
-//       Prénom: 'Example',
-//       Rôle: 'admin',
-//     },
-//     {
-//       Email: 'tom@abbouz.com',
-//       Nom: 'Tom',
-//       Prénom: 'Abbouz',
-//       Rôle: 'admin',
-//     },
-//     {
-//       Email: 'elon@musk.com',
-//       Nom: 'Elon',
-//       Prénom: 'Musk',
-//       Rôle: 'auditeur',
-//     },
-//     {
-//       Email: 'jeff@bezos.com',
-//       Nom: 'Jeff',
-//       Prénom: 'Bezos',
-//       Rôle: 'auditeur',
-//     },
-//     {
-//       Email: 'm@example.com',
-//       Nom: 'M',
-//       Prénom: 'Example',
-//       Rôle: 'admin',
-//     },
-//     {
-//       Email: 'tom@abbouz.com',
-//       Nom: 'Tom',
-//       Prénom: 'Abbouz',
-//       Rôle: 'admin',
-//     },
-//     {
-//       Email: 'elon@musk.com',
-//       Nom: 'Elon',
-//       Prénom: 'Musk',
-//       Rôle: 'auditeur',
-//     },
-//     {
-//       Email: 'jeff@bezos.com',
-//       Nom: 'Jeff',
-//       Prénom: 'Bezos',
-//       Rôle: 'auditeur',
-//     },
-//     {
-//       Email: 'm@example.com',
-//       Nom: 'M',
-//       Prénom: 'Example',
-//       Rôle: 'admin',
-//     },
-//     {
-//       Email: 'tom@abbouz.com',
-//       Nom: 'Tom',
-//       Prénom: 'Abbouz',
-//       Rôle: 'admin',
-//     },
-//     {
-//       Email: 'elon@musk.com',
-//       Nom: 'Elon',
-//       Prénom: 'Musk',
-//       Rôle: 'auditeur',
-//     },
-//     {
-//       Email: 'jeff@bezos.com',
-//       Nom: 'Jeff',
-//       Prénom: 'Bezos',
-//       Rôle: 'auditeur',
-//     },
-//     {
-//       Email: 'm@example.com',
-//       Nom: 'M',
-//       Prénom: 'Example',
-//       Rôle: 'admin',
-//     },
-//     {
-//       Email: 'tom@abbouz.com',
-//       Nom: 'Tom',
-//       Prénom: 'Abbouz',
-//       Rôle: 'admin',
-//     },
-//     {
-//       Email: 'elon@musk.com',
-//       Nom: 'Elon',
-//       Prénom: 'Musk',
-//       Rôle: 'auditeur',
-//     },
-//     {
-//       Email: 'jeff@bezos.com',
-//       Nom: 'Jeff',
-//       Prénom: 'Bezos',
-//       Rôle: 'auditeur',
-//     },
-//     {
-//       Email: 'm@example.com',
-//       Nom: 'M',
-//       Prénom: 'Example',
-//       Rôle: 'admin',
-//     },
-//     {
-//       Email: 'tom@abbouz.com',
-//       Nom: 'Tom',
-//       Prénom: 'Abbouz',
-//       Rôle: 'admin',
-//     },
-//   ];
-// }
+const UsersPage = () => {
+  const [users, setUsers] = useState([]); // Utilisez le state pour stocker les données
 
-export default class UsersPage extends React.Component<object, any> {
-  // constructor(props: any) {
-  //   super(props);
-  //   this.state = {
-  //     persons: [],
-  //   };
-  // }
+  useEffect(() => {
+    // Fonction asynchrone pour récupérer les données
+    const fetchData = async () => {
+      try {
+        const axiosConfig = {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '/',
+            'Cache-Control': 'no-cache',
+            'Cross-Origin-Resource-Policy': 'same-origin',
+          },
+        };
 
-  // componentDidMount() {
-  //   axios.get(`http://127.0.0.1:8000/admin/accounts`).then((res) => {
-  //     const persons2 = res.data;
-  //     this.setState({ persons: persons2 });
-  //   });
-  // }
+        const response = await InstanceAPI.get(
+          `http://localhost:8080/admin/accounts`,
+          axiosConfig
+        );
 
-  persons = [
-    {
-      Email: 'm@example.com',
-      Nom: 'M',
-      Prénom: 'Example',
-      Rôle: 'admin',
-    },
-    {
-      Email: 'tom@abbouz.com',
-      Nom: 'Tom',
-      Prénom: 'Abbouz',
-      Rôle: 'admin',
-    },
-    {
-      Email: 'elon@musk.com',
-      Nom: 'Elon',
-      Prénom: 'Musk',
-      Rôle: 'auditeur',
-    },
-    {
-      Email: 'jeff@bezos.com',
-      Nom: 'Jeff',
-      Prénom: 'Bezos',
-      Rôle: 'auditeur',
-    },
-    {
-      Email: 'm@example.com',
-      Nom: 'M',
-      Prénom: 'Example',
-      Rôle: 'admin',
-    },
-    {
-      Email: 'tom@abbouz.com',
-      Nom: 'Tom',
-      Prénom: 'Abbouz',
-      Rôle: 'admin',
-    },
-    {
-      Email: 'elon@musk.com',
-      Nom: 'Elon',
-      Prénom: 'Musk',
-      Rôle: 'auditeur',
-    },
-    {
-      Email: 'jeff@bezos.com',
-      Nom: 'Jeff',
-      Prénom: 'Bezos',
-      Rôle: 'auditeur',
-    },
-    {
-      Email: 'm@example.com',
-      Nom: 'M',
-      Prénom: 'Example',
-      Rôle: 'admin',
-    },
-    {
-      Email: 'tom@abbouz.com',
-      Nom: 'Tom',
-      Prénom: 'Abbouz',
-      Rôle: 'admin',
-    },
-    {
-      Email: 'elon@musk.com',
-      Nom: 'Elon',
-      Prénom: 'Musk',
-      Rôle: 'auditeur',
-    },
-    {
-      Email: 'jeff@bezos.com',
-      Nom: 'Jeff',
-      Prénom: 'Bezos',
-      Rôle: 'auditeur',
-    },
-    {
-      Email: 'm@example.com',
-      Nom: 'M',
-      Prénom: 'Example',
-      Rôle: 'admin',
-    },
-    {
-      Email: 'tom@abbouz.com',
-      Nom: 'Tom',
-      Prénom: 'Abbouz',
-      Rôle: 'admin',
-    },
-    {
-      Email: 'elon@musk.com',
-      Nom: 'Elon',
-      Prénom: 'Musk',
-      Rôle: 'auditeur',
-    },
-    {
-      Email: 'jeff@bezos.com',
-      Nom: 'Jeff',
-      Prénom: 'Bezos',
-      Rôle: 'auditeur',
-    },
-    {
-      Email: 'm@example.com',
-      Nom: 'M',
-      Prénom: 'Example',
-      Rôle: 'admin',
-    },
-    {
-      Email: 'tom@abbouz.com',
-      Nom: 'Tom',
-      Prénom: 'Abbouz',
-      Rôle: 'admin',
-    },
-    {
-      Email: 'elon@musk.com',
-      Nom: 'Elon',
-      Prénom: 'Musk',
-      Rôle: 'auditeur',
-    },
-    {
-      Email: 'jeff@bezos.com',
-      Nom: 'Jeff',
-      Prénom: 'Bezos',
-      Rôle: 'auditeur',
-    },
-    {
-      Email: 'm@example.com',
-      Nom: 'M',
-      Prénom: 'Example',
-      Rôle: 'admin',
-    },
-    {
-      Email: 'tom@abbouz.com',
-      Nom: 'Tom',
-      Prénom: 'Abbouz',
-      Rôle: 'admin',
-    },
-    {
-      Email: 'elon@musk.com',
-      Nom: 'Elon',
-      Prénom: 'Musk',
-      Rôle: 'auditeur',
-    },
-    {
-      Email: 'jeff@bezos.com',
-      Nom: 'Jeff',
-      Prénom: 'Bezos',
-      Rôle: 'auditeur',
-    },
-    {
-      Email: 'm@example.com',
-      Nom: 'M',
-      Prénom: 'Example',
-      Rôle: 'admin',
-    },
-    {
-      Email: 'tom@abbouz.com',
-      Nom: 'Tom',
-      Prénom: 'Abbouz',
-      Rôle: 'admin',
-    },
-    {
-      Email: 'elon@musk.com',
-      Nom: 'Elon',
-      Prénom: 'Musk',
-      Rôle: 'auditeur',
-    },
-    {
-      Email: 'jeff@bezos.com',
-      Nom: 'Jeff',
-      Prénom: 'Bezos',
-      Rôle: 'auditeur',
-    },
-    {
-      Email: 'm@example.com',
-      Nom: 'M',
-      Prénom: 'Example',
-      Rôle: 'admin',
-    },
-    {
-      Email: 'tom@abbouz.com',
-      Nom: 'Tom',
-      Prénom: 'Abbouz',
-      Rôle: 'admin',
-    },
-  ];
+        setUsers(response.data.users);
+      } catch (error) {
+        // console.error('Erreur lors de la récupération des données :', error);
+      }
+    };
 
-  render() {
-    return (
-      <div className="p-6">
-        {/* {this.state.persons.map((person: any) => (
-          <div>{person.name}</div>
-        ))} */}
-        <DataTable columns={columns} data={this.persons} />
-      </div>
-    );
-  }
-}
+    fetchData();
+  }, []);
+
+  return (
+    <div className="p-6">
+      <DataTable columns={columns} data={users} />
+    </div>
+  );
+};
+
+export default UsersPage;

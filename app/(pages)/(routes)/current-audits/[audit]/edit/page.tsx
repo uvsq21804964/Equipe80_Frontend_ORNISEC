@@ -1,120 +1,93 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Auditbar from '@/components/Auditbar';
+import InstanceAPI from '@/app/api/api';
 import Questionnaire from './_components/Questionnaire';
 
-const questions = [
-  {
-    label: 'Que pensez-vous de la vie ?',
-    aide: ['+2: bien', '0: non', '+9: sécurité maximale'],
-    note: 10,
-    commentaire: 'Très bien',
-  },
-  {
-    label: 'Le système est-il sécurisé? ',
-    aide: ['+2: bien', '0: non', '+9: sécurité maximale'],
-    note: 7,
-    commentaire: 'Peux mieux faire',
-  },
-  {
-    label:
-      'Quelle est la nature de la réalité et comment pouvons-nous être certains de la validité de notre perception du monde qui nous entoure?',
-    aide: ['+2: bien', '0: non', '+9: sécurité maximale'],
-    note: 3,
-    commentaire:
-      "La nature de la réalité reste une énigme, oscillant entre le réalisme objectif et l'idéalisme subjectif, tandis que la certitude de la validité de notre perception dépend de la perspective philosophique adoptée, allant du scepticisme sur les limites sensorielles à la confiance dans la fidélité de l'esprit à saisir la réalité.",
-  },
-  {
-    label:
-      'Peut-on réellement connaître autrui, ou sommes-nous toujours limités à une compréhension subjective de la conscience et des expériences individuelles ?',
-    aide: ['+2: bien', '0: non', '+9: sécurité maximale'],
-    note: 10,
-    commentaire:
-      "La connaissance d'autrui demeure limitée par la subjectivité de nos propres expériences, mais l'empathie et la communication permettent d'approcher une compréhension partagée, bien que jamais totale, de la conscience et des expériences d'autrui.",
-  },
-  {
-    label:
-      'En quoi consiste le libre arbitre, et sommes-nous véritablement libres de prendre des décisions ou simplement soumis à des forces déterministes qui régissent notre destinée ?',
-    aide: ['+2: bien', '0: non', '+9: sécurité maximale'],
-    note: 10,
-    commentaire:
-      "La nature du libre arbitre soulève des questions sur notre capacité à choisir indépendamment, mais le débat persiste entre ceux qui défendent la liberté de choix et ceux qui soutiennent que nos actions sont conditionnées par des forces déterministes, laissant la question de notre destinée ouverte à l'interprétation philosophique.",
-  },
-];
+const getquestionById = (id: string, categorie: string) => {
+  // Remplacez 'URL_DE_L_API' par l'URL réelle de votre API
 
-const sidebarItems = [
-  {
-    name: 'Gouvernance',
-    href: '/Gouvernance',
-  },
-  {
-    name: 'Sensibilisation',
-    href: '/sensibilisation',
-  },
-  {
-    name: 'Environnement utilisateur',
-    href: '/env_user',
-  },
-  {
-    name: 'Application',
-    href: '/Applications',
-  },
-  {
-    name: 'Fournisseurs et partenaires',
-    href: '/gestion_f_p',
-  },
-  {
-    name: 'Administration des infrastrutures',
-    href: '/Administration_infra',
-  },
-  {
-    name: 'Réseau',
-    href: '/reseau',
-  },
-  {
-    name: 'Protection des données',
-    href: '/protection',
-  },
-  {
-    name: 'Gestion des identités et accès',
-    href: '/gestion_i_a',
-  },
-  {
-    name: 'Détection',
-    href: '/detection',
-  },
-  {
-    name: 'Gestion des incidents et résillience',
-    href: '/Gestion_I_R',
-  },
-  {
-    name: 'Cloud',
-    href: '/Cloud',
-  },
-  {
-    name: 'SI industriels',
-    href: '/SI',
-  },
-];
+  // Utilisation d'Axios pour effectuer la requête GET
+  return InstanceAPI.get(
+    `http://localhost:8080/questions/${categorie}/${id}`,
 
-export default function Edit() {
+    {
+      withCredentials: true,
+    }
+  )
+    .then((response) => {
+      console.log(response.data);
+      // Retourne les données
+      return response.data;
+    })
+    .catch((error) => {
+      console.error('Erreur lors de la requête GET :', error);
+    });
+  // Retourne une promesse contenant les dnnées
+};
+const getElementById = (id: string) => {
+  // Utilisation d'Axios pour effectuer la requête GET
+  return InstanceAPI.get(`categories/${id}`, {
+    withCredentials: true,
+  })
+    .then((response) => {
+      console.log('RESPONSE', response);
+      return response.data;
+    })
+    .catch((error) => {
+      console.error('Erreur lors de la requête GET :', error);
+    });
+  // Retourne une promesse contenant les dnnées
+};
+
+export default function Edit({ params }: { params: { audit: string } }) {
   const [categorie, setCategorie] = useState('Gouvernance');
-
+  const [sidebarItems, setSidebarItems] = useState<string[]>([]);
+  const [categoryQuestions, setCategoryQuestions] = useState([]);
   const handleChildValueChange = (value: string) => {
     setCategorie(value);
   };
+  useEffect(() => {
+    const exempleUtilisation = async () => {
+      try {
+        const id = params.audit;
+        const result = await getElementById(id);
+        setSidebarItems(result);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des données :', error);
+      }
+    };
+
+    exempleUtilisation();
+  }, [params.audit]);
+
+  useEffect(() => {
+    const fetchCategoryQuestions = async () => {
+      try {
+        const categoryQuestionsResult = await getquestionById(
+          params.audit,
+          categorie
+        );
+        setCategoryQuestions(categoryQuestionsResult);
+      } catch (error) {
+        console.error(
+          'Erreur lors de la récupération des questions de catégorie :',
+          error
+        );
+      }
+    };
+
+    fetchCategoryQuestions();
+  }, [params.audit, categorie]);
 
   const findIndex = (categorieActuelle: string) => {
-    let indexActuel = 0;
+    // Utilise indexOf pour trouver l'index de la catégorie actuelle dans le tableau
+    const indexActuel = sidebarItems.indexOf(categorieActuelle);
 
-    sidebarItems.forEach((element, index) => {
-      if (element.name === categorieActuelle) {
-        indexActuel = index + 1;
-      }
-    });
-
-    return indexActuel;
+    // Si la catégorie actuelle est trouvée, retourne son index plus 1 (comme dans votre exemple)
+    // Sinon, retourne 0 (ou -1 si vous préférez)
+    return indexActuel !== -1 ? indexActuel + 1 : 0;
   };
 
   return (
@@ -125,28 +98,30 @@ export default function Edit() {
             <div className="hidden md:flex items-center justify-between space-y-2">
               <h2
                 className="
-                text-4xl
+                text-2xl
                 font-bold
                 tracking-tight
                 text-white
                 text-shadow
                 "
               >
-                {categorie}
+                {categorie.replaceAll('_', ' ')}
               </h2>
               <span className="text-sm text-white">
-                {`Catégorie ${findIndex(categorie)} / ${sidebarItems.length}`}
+                {`Catégorie  ${findIndex(categorie)} / ${sidebarItems.length}`}
               </span>
             </div>
-            <Questionnaire questions={questions} />
+            <Questionnaire questions={categoryQuestions} para={params.audit} />
           </div>
         </div>
       </div>
       <div className="md:flex w-[5%] h-full end-0 fixed inset-y-0 z-5">
-        <Auditbar
-          onChildValueChange={handleChildValueChange}
-          items={sidebarItems}
-        />
+        {sidebarItems.length > 0 && (
+          <Auditbar
+            onChildValueChange={handleChildValueChange}
+            items={sidebarItems}
+          />
+        )}
       </div>
     </div>
   );

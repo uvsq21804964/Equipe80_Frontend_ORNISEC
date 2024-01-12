@@ -109,6 +109,9 @@ const Sidebar: React.FC<SidebarProps> = ({ mobile = false }) => {
             .then(() => {
               const cookies = new Cookies();
               cookies.remove('access_token');
+              cookies.remove('logged_in');
+              cookies.remove('refresh_token');
+              cookies.remove('connected');
               toast.success('Déconnexion réussie.', {
                 duration: 4000,
                 position: 'top-center',
@@ -121,7 +124,8 @@ const Sidebar: React.FC<SidebarProps> = ({ mobile = false }) => {
       },
     ];
 
-    if (pathname?.startsWith(`/admin/`)) {
+    // if (pathname?.startsWith(`/admin/`)) {
+    if (true) {
       bottomOptions.unshift({
         name: 'Gérer les comptes',
         href: '/admin/accounts',

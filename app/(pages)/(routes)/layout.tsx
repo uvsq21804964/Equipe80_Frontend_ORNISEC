@@ -13,8 +13,8 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    const token = cookies.get('access_token');
-    if (token === undefined) {
+    const token = cookies.get('connected');
+    if (token !== true) {
       router.push('/login');
     }
   }, [cookies, router]);

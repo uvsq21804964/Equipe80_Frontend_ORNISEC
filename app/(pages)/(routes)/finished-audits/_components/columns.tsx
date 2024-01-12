@@ -13,7 +13,7 @@ const chef = "Responsable de l'audit";
 
 export const columns: ColumnDef<User>[] = [
   {
-    accessorKey: 'Entreprise',
+    accessorKey: 'companie',
     header: ({ column }) => {
       return (
         <div className="flex justify-center">
@@ -28,7 +28,7 @@ export const columns: ColumnDef<User>[] = [
       );
     },
     cell: ({ row }) => {
-      const entreprise = row.getValue('Entreprise') || 'N/A';
+      const entreprise = row.getValue('companie') || 'N/A';
       return (
         <div className="flex justify-center">
           {JSON.stringify(entreprise).replaceAll('"', '')}
@@ -37,7 +37,7 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
-    accessorKey: 'Responsable',
+    accessorKey: 'chef',
     header: ({ column }) => {
       return (
         <div className="flex justify-center">
@@ -52,7 +52,7 @@ export const columns: ColumnDef<User>[] = [
       );
     },
     cell: ({ row }) => {
-      const gerant = row.getValue('Responsable') || 'N/A';
+      const gerant = row.getValue('chef') || 'N/A';
       return (
         <div className="flex justify-center">
           {JSON.stringify(gerant).replaceAll('"', '')}
@@ -61,7 +61,7 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
-    accessorKey: 'Début',
+    accessorKey: 'date',
     header: ({ column }) => {
       return (
         <div className="flex justify-center">
@@ -76,7 +76,7 @@ export const columns: ColumnDef<User>[] = [
       );
     },
     cell: ({ row }) => {
-      const debut = row.getValue('Début') || 'N/A';
+      const debut = row.getValue('date') || 'N/A';
       return (
         <div className="flex justify-center">
           {JSON.stringify(debut).replaceAll('"', '')}
@@ -85,7 +85,7 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
-    accessorKey: 'Fin',
+    accessorKey: 'date',
     header: ({ column }) => {
       return (
         <div className="flex justify-center">
@@ -100,7 +100,7 @@ export const columns: ColumnDef<User>[] = [
       );
     },
     cell: ({ row }) => {
-      const fin = row.getValue('Fin') || 'N/A';
+      const fin = row.getValue('date') || 'N/A';
       return (
         <div className="flex justify-center">
           {JSON.stringify(fin).replaceAll('"', '')}
